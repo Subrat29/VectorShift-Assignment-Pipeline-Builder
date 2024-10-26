@@ -1,19 +1,20 @@
-// inputNode.js
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Handle, Position } from 'reactflow';
+import { useDispatch } from 'react-redux';
+import { updateNodeField } from '../redux/flowSlice';
 
 export const InputNode = ({ id, data }) => {
+  const dispatch = useDispatch();
   const [currName, setCurrName] = useState(data?.inputName || id.replace('customInput-', 'input_'));
   const [inputType, setInputType] = useState(data.inputType || 'Text');
 
-  const handleNameChange = (e) => {
-    setCurrName(e.target.value);
-  };
+  useEffect(() => {
+    dispatch(updateNodeField({ nodeId: id, fieldName: 'inputName', fieldValue: currName }));
+  }, [currName, dispatch, id]);
 
-  const handleTypeChange = (e) => {
-    setInputType(e.target.value);
-  };
+  useEffect(() => {
+    dispatch(updateNodeField({ nodeId: id, fieldName: 'inputType', fieldValue: inputType }));
+  }, [inputType, dispatch, id]);
 
   return (
     <div style={{width: 200, height: 80, border: '1px solid black'}}>
@@ -26,12 +27,15 @@ export const InputNode = ({ id, data }) => {
           <input 
             type="text" 
             value={currName} 
-            onChange={handleNameChange} 
+            onChange={(e) => setCurrName(e.target.value)} 
           />
         </label>
         <label>
           Type:
-          <select value={inputType} onChange={handleTypeChange}>
+          <select 
+            value={inputType} 
+            onChange={(e) => setInputType(e.target.value)}
+          >
             <option value="Text">Text</option>
             <option value="File">File</option>
           </select>
@@ -44,4 +48,4 @@ export const InputNode = ({ id, data }) => {
       />
     </div>
   );
-}
+};
