@@ -1,3 +1,4 @@
+// 3. Update /frontend/src/ui.js
 import { useCallback, useRef, useState } from 'react';
 import ReactFlow, { Controls, Background, MiniMap } from 'reactflow';
 import { useSelector, useDispatch } from 'react-redux';
@@ -9,29 +10,20 @@ import {
   selectNodes,
   selectEdges
 } from './redux/flowSlice';
-import { InputNode } from './nodes/inputNode';
-import { LLMNode } from './nodes/llmNode';
-import { OutputNode } from './nodes/outputNode';
-import { TextNode } from './nodes/textNode';
+import { nodeTypes } from './nodes'; // Updated import
 import { useNodeId } from './hooks/useNodeId';
 
 import 'reactflow/dist/style.css';
 
 const gridSize = 20;
 const proOptions = { hideAttribution: true };
-const nodeTypes = {
-  customInput: InputNode,
-  llm: LLMNode,
-  customOutput: OutputNode,
-  text: TextNode,
-};
 
 export const PipelineUI = () => {
   const reactFlowWrapper = useRef(null);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const dispatch = useDispatch();
   const getNodeID = useNodeId();
-  
+
   const nodes = useSelector(selectNodes);
   const edges = useSelector(selectEdges);
 
@@ -48,11 +40,11 @@ export const PipelineUI = () => {
       if (event?.dataTransfer?.getData('application/reactflow')) {
         const appData = JSON.parse(event.dataTransfer.getData('application/reactflow'));
         const type = appData?.nodeType;
-  
+
         if (typeof type === 'undefined' || !type) {
           return;
         }
-  
+
         const position = reactFlowInstance.project({
           x: event.clientX - reactFlowBounds.left,
           y: event.clientY - reactFlowBounds.top,
@@ -65,7 +57,7 @@ export const PipelineUI = () => {
           position,
           data: getInitNodeData(nodeID, type),
         };
-  
+
         dispatch(addNode(newNode));
       }
     },
@@ -99,7 +91,7 @@ export const PipelineUI = () => {
   }, []);
 
   return (
-    <div ref={reactFlowWrapper} style={{width: '100wv', height: '70vh'}}>
+    <div ref={reactFlowWrapper} style={{ width: '100wv', height: '70vh' }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}

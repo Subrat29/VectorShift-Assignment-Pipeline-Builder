@@ -1,4 +1,4 @@
-// src/redux/flowSlice.js
+// flowSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 import {
   applyNodeChanges,
@@ -10,7 +10,17 @@ import {
 const initialState = {
   nodes: [],
   edges: [],
-  nodeIDs: {}
+  nodeIDs: {
+    customInput: 0,
+    llm: 0,
+    customOutput: 0,
+    text: 0,
+    api: 0,
+    transform: 0,
+    timer: 0,
+    filter: 0,
+    aggregator: 0
+  }
 };
 
 export const flowSlice = createSlice({
@@ -52,6 +62,13 @@ export const flowSlice = createSlice({
     incrementNodeId: (state, action) => {
       const type = action.payload;
       state.nodeIDs[type] = (state.nodeIDs[type] || 0) + 1;
+    },
+    resetFlow: (state) => {
+      state.nodes = [];
+      state.edges = [];
+      Object.keys(state.nodeIDs).forEach(key => {
+        state.nodeIDs[key] = 0;
+      });
     }
   }
 });
@@ -62,7 +79,8 @@ export const {
   updateEdges,
   addEdge,
   updateNodeField,
-  incrementNodeId
+  incrementNodeId,
+  resetFlow
 } = flowSlice.actions;
 
 // Selectors

@@ -1,13 +1,24 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.react-flow__node-default {
+  font-size: 12px;
+  background: white;
+  border: 1px solid #bbb;
+  border-radius: 5px;
+  padding: 10px;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.react-flow__handle {
+  width: 8px;
+  height: 8px;
+  background: white;
+  border: 2px solid #6966FF;
+  border-radius: 50%;
+}
+
+.react-flow__handle:hover {
+  background: #6966FF;
 }

@@ -1,17 +1,31 @@
-// toolbar.js
-
+// 2. Update /frontend/src/toolbar.js
 import { DraggableNode } from './draggableNode';
 
+// toolbar.js (update the toolbar to include new nodes)
 export const PipelineToolbar = () => {
+  const nodeTypes = [
+    { type: 'customInput', label: 'Input' },
+    { type: 'llm', label: 'LLM' },
+    { type: 'customOutput', label: 'Output' },
+    { type: 'text', label: 'Text' },
+    { type: 'api', label: 'API' },
+    { type: 'transform', label: 'Transform' },
+    { type: 'timer', label: 'Timer' },
+    { type: 'filter', label: 'Filter' },
+    { type: 'aggregator', label: 'Aggregator' }
+  ];
 
-    return (
-        <div style={{ padding: '10px' }}>
-            <div style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                <DraggableNode type='customInput' label='Input' />
-                <DraggableNode type='llm' label='LLM' />
-                <DraggableNode type='customOutput' label='Output' />
-                <DraggableNode type='text' label='Text' />
-            </div>
-        </div>
-    );
+  return (
+    <div className="p-4 border-b border-gray-200">
+      <div className="flex flex-wrap gap-3">
+        {nodeTypes.map(node => (
+          <DraggableNode
+            key={node.type}
+            type={node.type}
+            label={node.label}
+          />
+        ))}
+      </div>
+    </div>
+  );
 };

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Handle, Position } from 'reactflow';
 import { useDispatch } from 'react-redux';
 import { updateNodeField } from '../redux/flowSlice';
+import React from 'react'
 
 export const InputNode = ({ id, data }) => {
   const dispatch = useDispatch();
@@ -17,23 +18,23 @@ export const InputNode = ({ id, data }) => {
   }, [inputType, dispatch, id]);
 
   return (
-    <div style={{width: 200, height: 80, border: '1px solid black'}}>
+    <div style={{ width: 200, height: 80, border: '1px solid black' }}>
       <div>
         <span>Input</span>
       </div>
       <div>
         <label>
           Name:
-          <input 
-            type="text" 
-            value={currName} 
-            onChange={(e) => setCurrName(e.target.value)} 
+          <input
+            type="text"
+            value={currName}
+            onChange={(e) => setCurrName(e.target.value)}
           />
         </label>
         <label>
           Type:
-          <select 
-            value={inputType} 
+          <select
+            value={inputType}
             onChange={(e) => setInputType(e.target.value)}
           >
             <option value="Text">Text</option>
