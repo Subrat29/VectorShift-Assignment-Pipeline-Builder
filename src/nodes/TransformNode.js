@@ -1,12 +1,12 @@
+import { useState, useEffect } from 'react';
 import { BaseNode, TextField, SelectField } from './BaseNode';
-import React from 'react'
 
-// nodes/TransformNode.js
 export const TransformNode = ({ id, data }) => {
-  const [transform, setTransform] = React.useState(data?.transform || 'uppercase');
+  const { transform: initialTransform = 'uppercase' } = data || {};
+  const [transform, setTransform] = useState(initialTransform);
 
-  React.useEffect(() => {
-    if (transform) data.updateField?.('transform', transform);
+  useEffect(() => {
+    data?.updateField?.('transform', transform);
   }, [transform]);
 
   return (
@@ -20,7 +20,7 @@ export const TransformNode = ({ id, data }) => {
       <SelectField
         label="Transform Type"
         value={transform}
-        onChange={setTransform}
+        onChange={(value) => setTransform(value)}
         options={[
           { value: 'uppercase', label: 'To Uppercase' },
           { value: 'lowercase', label: 'To Lowercase' },

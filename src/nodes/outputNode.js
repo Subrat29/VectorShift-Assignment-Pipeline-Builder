@@ -1,10 +1,27 @@
-// outputNode.js
-import React, { useState } from 'react';
-import { BaseNode, TextField, SelectField } from './BaseNode'; // Import BaseNode and field components
+import React, { useState, useEffect, useCallback } from 'react';
+import { BaseNode, TextField, SelectField } from './BaseNode';
 
 export const OutputNode = ({ id, data }) => {
-  const [currName, setCurrName] = useState(data?.outputName || id.replace('customOutput-', 'output_'));
-  const [outputType, setOutputType] = useState(data.outputType || 'Text');
+  const { outputName, outputType, updateField } = data;
+
+  const [currName, setCurrName] = useState(outputName || id.replace('customOutput-', 'output_'));
+  const [type, setType] = useState(outputType || 'Text');
+
+  const handleUpdateField = useCallback((fieldName, value) => {
+    if (updateField) {
+      updateField(fieldName, value);
+    }
+  }, [updateField]);
+
+  useEffect(() => {
+    handleUpdateField('outputName', currName);
+    handleUpdateField('outputType', type);
+  }, [currName, type, handleUpdateField]);
+
+  const outputTypeOptions = [
+    { value: 'Text', label: 'Text' },
+    { value: 'Image', label: 'Image' },
+  ];
 
   return (
     <BaseNode
@@ -14,7 +31,6 @@ export const OutputNode = ({ id, data }) => {
       inputs={[{ id: 'input', type: 'target' }]}
       outputs={[{ id: 'output', type: 'source' }]}
     >
-      {/* Replace individual input fields with reusable field components */}
       <TextField
         label="Name"
         value={currName}
@@ -22,9 +38,9 @@ export const OutputNode = ({ id, data }) => {
       />
       <SelectField
         label="Type"
-        value={outputType}
-        onChange={setOutputType}
-        options={[{ value: 'Text', label: 'Text' }, { value: 'Image', label: 'Image' }]}
+        value={type}
+        onChange={setType}
+        options={outputTypeOptions}
       />
     </BaseNode>
   );

@@ -1,16 +1,17 @@
+import { useEffect, useState } from 'react';
 import { BaseNode, TextField, SelectField } from './BaseNode';
-import React from 'react'
 
-// 5. Aggregator Node
 export const AggregatorNode = ({ id, data }) => {
-  const [operation, setOperation] = React.useState(data?.operation || 'sum');
-  const [field, setField] = React.useState(data?.field || '');
-  const [window, setWindow] = React.useState(data?.window || '10');
+  const { operation: initialOperation = 'sum', field: initialField = '', window: initialWindow = '10' } = data || {};
 
-  React.useEffect(() => {
-    if (operation) data.updateField?.('operation', operation);
-    if (field) data.updateField?.('field', field);
-    if (window) data.updateField?.('window', window);
+  const [operation, setOperation] = useState(initialOperation);
+  const [field, setField] = useState(initialField);
+  const [window, setWindow] = useState(initialWindow);
+
+  useEffect(() => {
+    data?.updateField?.('operation', operation);
+    data?.updateField?.('field', field);
+    data?.updateField?.('window', window);
   }, [operation, field, window]);
 
   return (
@@ -24,7 +25,7 @@ export const AggregatorNode = ({ id, data }) => {
       <SelectField
         label="Operation"
         value={operation}
-        onChange={setOperation}
+        onChange={(value) => setOperation(value)}
         options={[
           { value: 'sum', label: 'Sum' },
           { value: 'avg', label: 'Average' },
@@ -36,13 +37,13 @@ export const AggregatorNode = ({ id, data }) => {
       <TextField
         label="Field"
         value={field}
-        onChange={setField}
+        onChange={(value) => setField(value)}
         placeholder="data.value"
       />
       <TextField
         label="Window Size"
         value={window}
-        onChange={setWindow}
+        onChange={(value) => setWindow(value)}
         placeholder="10"
       />
     </BaseNode>

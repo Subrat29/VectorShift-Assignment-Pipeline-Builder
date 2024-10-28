@@ -1,18 +1,16 @@
+import { useState, useEffect } from 'react';
 import { BaseNode, TextField, SelectField } from './BaseNode';
-import React from 'react'
 
-// 3. Timer Node
 export const TimerNode = ({ id, data }) => {
-  const [interval, setInterval] = React.useState(data?.interval || '1000');
-  const [unit, setUnit] = React.useState(data?.unit || 'ms');
+  const { interval: initialInterval = '1000', unit: initialUnit = 'ms' } = data || {};
 
-  React.useEffect(() => {
-    if (interval) data.updateField?.('interval', interval);
-  }, [interval]);
+  const [interval, setInterval] = useState(initialInterval);
+  const [unit, setUnit] = useState(initialUnit);
 
-  React.useEffect(() => {
-    if (unit) data.updateField?.('unit', unit);
-  }, [unit]);
+  useEffect(() => {
+    data?.updateField?.('interval', interval);
+    data?.updateField?.('unit', unit);
+  }, [interval, unit]);
 
   return (
     <BaseNode
@@ -24,13 +22,13 @@ export const TimerNode = ({ id, data }) => {
       <TextField
         label="Interval"
         value={interval}
-        onChange={setInterval}
+        onChange={(value) => setInterval(value)}
         placeholder="1000"
       />
       <SelectField
         label="Unit"
         value={unit}
-        onChange={setUnit}
+        onChange={(value) => setUnit(value)}
         options={[
           { value: 'ms', label: 'Milliseconds' },
           { value: 's', label: 'Seconds' },

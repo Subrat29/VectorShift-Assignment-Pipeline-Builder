@@ -5,9 +5,10 @@ import { incrementNodeId, selectNodeIDs } from '../redux/flowSlice';
 export const useNodeId = () => {
   const dispatch = useDispatch();
   const nodeIDs = useSelector(selectNodeIDs);
-  
+
   return useCallback((type) => {
     dispatch(incrementNodeId(type));
-    return `${type}-${nodeIDs[type] + 1}`;
+    const nextId = (nodeIDs[type] ?? 0) + 1;
+    return `${type}-${nextId}`;
   }, [dispatch, nodeIDs]);
 };

@@ -3,7 +3,7 @@ import { Handle, Position } from 'reactflow';
 import { useDispatch } from 'react-redux';
 import { updateNodeField } from '../redux/flowSlice';
 
-const HandleStyles = {
+const HANDLE_STYLES = {
   width: '12px',
   height: '12px',
   background: 'white',
@@ -17,7 +17,7 @@ export const createHandle = ({ type, position, id, style = {}, ...props }) => (
     type={type}
     position={position}
     id={id}
-    style={{ ...HandleStyles, ...style }}
+    style={{ ...HANDLE_STYLES, ...style }}
     {...props}
   />
 );
@@ -38,107 +38,82 @@ export const BaseNode = ({
     dispatch(updateNodeField({ nodeId: id, fieldName, fieldValue }));
   };
 
+  const renderHandles = (handles, type, position, offset) =>
+    handles.map((handle, index) => {
+      const yPosition = `${((index + 1) * 100) / (handles.length + 1)}%`;
+      return createHandle({
+        key: `${type}-${handle.id}`,
+        type,
+        position,
+        id: `${id}-${handle.id}`,
+        style: { [offset]: '-6px', top: yPosition },
+        ...(handle.props || {}),
+      });
+    });
+
   return (
-    <div className="react-flow__node-default" style={{
-      padding: '12px',
-      background: 'white',
-      border: '1px solid #bbb',
-      borderRadius: '8px',
-      width: `${width}px`,
-      minHeight: `${minHeight}px`,
-      position: 'relative',
-    }}>
-      {/* Node Header */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        marginBottom: '8px',
-        color: '#666'
-      }}>
-        <span style={{
-          fontSize: '14px',
-          fontWeight: 500
-        }}>{title}</span>
+    <div
+      className="react-flow__node-default"
+      style={{
+        padding: '12px',
+        background: 'white',
+        border: '1px solid #bbb',
+        borderRadius: '8px',
+        width: `${width}px`,
+        minHeight: `${minHeight}px`,
+        position: 'relative',
+      }}
+    >
+      <div className="node-header" style={{ display: 'flex', alignItems: 'center', marginBottom: '8px', color: '#666' }}>
+        <span style={{ fontSize: '14px', fontWeight: 500 }}>{title}</span>
       </div>
 
-      {/* Input Handles */}
-      {inputs.map((input, index) => {
-        const yPosition = (index + 1) * (100 / (inputs.length + 1));
-        return createHandle({
-          key: `input-${input.id}`,
-          type: 'target',
-          position: Position.Left,
-          id: `${id}-${input.id}`,
-          style: { left: '-6px', top: `${yPosition}%` },
-          ...(input.props || {})
-        });
-      })}
+      {renderHandles(inputs, 'target', Position.Left, 'left')}
 
-      {/* Node Content */}
       <div style={{ padding: '0 8px' }}>
         {React.Children.map(children, (child) =>
-          typeof child.type === 'function' // Check if the child is a component (function or class)
-            ? React.cloneElement(child, { updateField, data })
-            : child // Leave as is if it's not a component (e.g., a plain HTML element)
+          typeof child.type === 'function' ? React.cloneElement(child, { updateField, data }) : child
         )}
       </div>
 
-      {/* Output Handles */}
-      {outputs.map((output, index) => {
-        const yPosition = (index + 1) * (100 / (outputs.length + 1));
-        return createHandle({
-          key: `output-${output.id}`,
-          type: 'source',
-          position: Position.Right,
-          id: `${id}-${output.id}`,
-          style: { right: '-6px', top: `${yPosition}%` },
-          ...(output.props || {})
-        });
-      })}
+      {renderHandles(outputs, 'source', Position.Right, 'right')}
     </div>
   );
 };
 
-// Field Components for Reuse
+const fieldStyle = {
+  container: { marginBottom: '8px' },
+  label: { display: 'block', marginBottom: '4px', fontSize: '12px' },
+  input: {
+    width: '100%',
+    padding: '4px 8px',
+    borderRadius: '4px',
+    border: '1px solid #ddd',
+    fontSize: '13px',
+  },
+};
+
 export const TextField = ({ label, value, onChange, placeholder }) => (
-  <div style={{ marginBottom: '8px' }}>
-    <label style={{ display: 'block', marginBottom: '4px', fontSize: '12px' }}>
-      {label}:
-    </label>
+  <div style={fieldStyle.container}>
+    <label style={fieldStyle.label}>{label}:</label>
     <input
       type="text"
       value={value}
-      onChange={e => onChange(e.target.value)}
+      onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
-      style={{
-        width: '100%',
-        padding: '4px 8px',
-        borderRadius: '4px',
-        border: '1px solid #ddd',
-        fontSize: '13px'
-      }}
+      style={fieldStyle.input}
     />
   </div>
 );
 
 export const SelectField = ({ label, value, onChange, options }) => (
-  <div style={{ marginBottom: '8px' }}>
-    <label style={{ display: 'block', marginBottom: '4px', fontSize: '12px' }}>
-      {label}:
-    </label>
-    <select
-      value={value}
-      onChange={e => onChange(e.target.value)}
-      style={{
-        width: '100%',
-        padding: '4px 8px',
-        borderRadius: '4px',
-        border: '1px solid #ddd',
-        fontSize: '13px'
-      }}
-    >
-      {options.map(opt => (
-        <option key={opt.value} value={opt.value}>{opt.label}</option>
+  <div style={fieldStyle.container}>
+    <label style={fieldStyle.label}>{label}:</label>
+    <select value={value} onChange={(e) => onChange(e.target.value)} style={fieldStyle.input}>
+      {options.map((opt) => (
+        <option key={opt.value} value={opt.value}>
+          {opt.label}
+        </option>
       ))}
     </select>
   </div>

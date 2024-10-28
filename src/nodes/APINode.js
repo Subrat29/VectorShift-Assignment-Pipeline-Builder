@@ -1,41 +1,34 @@
-import React from 'react'
+import { useState, useEffect } from 'react';
 import { BaseNode, TextField, SelectField } from './BaseNode';
 
 export const APINode = ({ id, data }) => {
-  const [endpoint, setEndpoint] = React.useState(data?.endpoint || '');
-  const [method, setMethod] = React.useState(data?.method || 'GET');
+  const { endpoint: initialEndpoint = '', method: initialMethod = 'GET' } = data || {};
+  const [endpoint, setEndpoint] = useState(initialEndpoint);
+  const [method, setMethod] = useState(initialMethod);
 
-  React.useEffect(() => {
-    if (endpoint) data.updateField?.('endpoint', endpoint);
-  }, [endpoint]);
-
-  React.useEffect(() => {
-    if (method) data.updateField?.('method', method);
-  }, [method]);
+  useEffect(() => {
+    data?.updateField?.('endpoint', endpoint);
+    data?.updateField?.('method', method);
+  }, [endpoint, method]);
 
   return (
     <BaseNode
       id={id}
       data={data}
       title="API Request"
-      inputs={[
-        { id: 'headers' },
-        { id: 'body' }
-      ]}
-      outputs={[
-        { id: 'response' }
-      ]}
+      inputs={[{ id: 'headers' }, { id: 'body' }]}
+      outputs={[{ id: 'response' }]}
     >
       <TextField
         label="Endpoint"
         value={endpoint}
-        onChange={setEndpoint}
+        onChange={(value) => setEndpoint(value)}
         placeholder="https://api.example.com/data"
       />
       <SelectField
         label="Method"
         value={method}
-        onChange={setMethod}
+        onChange={(value) => setMethod(value)}
         options={[
           { value: 'GET', label: 'GET' },
           { value: 'POST', label: 'POST' },

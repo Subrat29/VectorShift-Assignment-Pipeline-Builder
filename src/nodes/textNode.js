@@ -1,6 +1,5 @@
-// textNode.js
-import React, { useState, useEffect, useRef } from 'react';
-import { BaseNode } from './BaseNode'; // Import BaseNode
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { BaseNode } from './BaseNode';
 import { useDispatch } from 'react-redux';
 import { updateNodeField } from '../redux/flowSlice';
 
@@ -9,36 +8,41 @@ const MAX_NODE_HEIGHT = 300;
 
 export const TextNode = ({ id, data }) => {
   const dispatch = useDispatch();
-  const [text, setText] = useState(data?.text || '');
-  const [variables, setVariables] = useState([]);
   const textAreaRef = useRef(null);
 
-  const extractVariables = (inputText) => {
+  const [text, setText] = useState(data?.text || '');
+  const [variables, setVariables] = useState([]);
+
+  const extractVariables = useCallback((inputText) => {
     const matches = Array.from(inputText.matchAll(VARIABLE_REGEX));
     return [...new Set(matches.map(match => match[1].trim()))];
-  };
+  }, []);
 
-  const adjustTextAreaHeight = () => {
+  const adjustTextAreaHeight = useCallback(() => {
     const textarea = textAreaRef.current;
     if (textarea) {
       textarea.style.height = 'auto';
-      const newHeight = Math.min(MAX_NODE_HEIGHT - 40, Math.max(100, textarea.scrollHeight));
-      textarea.style.height = `${newHeight}px`;
+      textarea.style.height = `${Math.min(MAX_NODE_HEIGHT - 40, Math.max(100, textarea.scrollHeight))}px`;
     }
-  };
+  }, []);
 
   useEffect(() => {
     dispatch(updateNodeField({ nodeId: id, fieldName: 'text', fieldValue: text }));
+
     const newVariables = extractVariables(text);
     setVariables(newVariables);
     adjustTextAreaHeight();
-  }, [text, dispatch, id]);
+
+    // console.log(`Extracted Variables: ${JSON.stringify(newVariables)}`);
+    // console.log(`Current Edges: ${JSON.stringify(edges)}`); // Log current edges
+  }, [text, dispatch, id, extractVariables, adjustTextAreaHeight]);
 
   useEffect(() => {
     adjustTextAreaHeight();
-  }, []);
+  }, [adjustTextAreaHeight]);
 
   const handleTextChange = (newText) => {
+    console.log(`Text changed to: ${newText}`);
     setText(newText);
     dispatch(updateNodeField({ nodeId: id, fieldName: 'text', fieldValue: newText }));
   };
@@ -54,7 +58,6 @@ export const TextNode = ({ id, data }) => {
       <textarea
         ref={textAreaRef}
         value={text}
-        // onChange={(e) => setText(e.target.value)}
         onChange={(e) => handleTextChange(e.target.value)}
         placeholder="Enter text here. Use {{variableName}} for variables..."
         style={{

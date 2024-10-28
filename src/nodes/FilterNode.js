@@ -1,17 +1,31 @@
 import { BaseNode, TextField, SelectField } from './BaseNode';
-import React from 'react'
+import React, { useState, useEffect, useCallback } from 'react';
 
-// 4. Filter Node
 export const FilterNode = ({ id, data }) => {
-  const [field, setField] = React.useState(data?.field || '');
-  const [operator, setOperator] = React.useState(data?.operator || 'equals');
-  const [value, setValue] = React.useState(data?.value || '');
+  const { updateField } = data;
 
-  React.useEffect(() => {
-    if (field) data.updateField?.('field', field);
-    if (operator) data.updateField?.('operator', operator);
-    if (value) data.updateField?.('value', value);
-  }, [field, operator, value]);
+  const [field, setField] = useState(data?.field || '');
+  const [operator, setOperator] = useState(data?.operator || 'equals');
+  const [value, setValue] = useState(data?.value || '');
+
+  const handleFieldUpdate = useCallback((fieldName, value) => {
+    if (updateField) {
+      updateField(fieldName, value);
+    }
+  }, [updateField]);
+
+  useEffect(() => {
+    handleFieldUpdate('field', field);
+    handleFieldUpdate('operator', operator);
+    handleFieldUpdate('value', value);
+  }, [field, operator, value, handleFieldUpdate]);
+
+  const operatorOptions = [
+    { value: 'equals', label: 'Equals' },
+    { value: 'contains', label: 'Contains' },
+    { value: 'greater', label: 'Greater Than' },
+    { value: 'less', label: 'Less Than' },
+  ];
 
   return (
     <BaseNode
@@ -21,7 +35,7 @@ export const FilterNode = ({ id, data }) => {
       inputs={[{ id: 'input' }]}
       outputs={[
         { id: 'match' },
-        { id: 'nomatch' }
+        { id: 'nomatch' },
       ]}
     >
       <TextField
@@ -34,12 +48,7 @@ export const FilterNode = ({ id, data }) => {
         label="Operator"
         value={operator}
         onChange={setOperator}
-        options={[
-          { value: 'equals', label: 'Equals' },
-          { value: 'contains', label: 'Contains' },
-          { value: 'greater', label: 'Greater Than' },
-          { value: 'less', label: 'Less Than' }
-        ]}
+        options={operatorOptions}
       />
       <TextField
         label="Value"

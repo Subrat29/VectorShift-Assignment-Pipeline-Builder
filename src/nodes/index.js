@@ -1,5 +1,3 @@
-// 1. First, create a new file: /frontend/src/nodes/index.js
-// This will be our central export point for all nodes
 import { InputNode } from './inputNode';
 import { LLMNode } from './llmNode';
 import { OutputNode } from './outputNode';
