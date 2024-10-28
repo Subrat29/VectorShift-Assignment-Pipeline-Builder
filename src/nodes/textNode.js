@@ -38,6 +38,11 @@ export const TextNode = ({ id, data }) => {
     adjustTextAreaHeight();
   }, []);
 
+  const handleTextChange = (newText) => {
+    setText(newText);
+    dispatch(updateNodeField({ nodeId: id, fieldName: 'text', fieldValue: newText }));
+  };
+
   return (
     <BaseNode
       id={id}
@@ -49,7 +54,8 @@ export const TextNode = ({ id, data }) => {
       <textarea
         ref={textAreaRef}
         value={text}
-        onChange={(e) => setText(e.target.value)}
+        // onChange={(e) => setText(e.target.value)}
+        onChange={(e) => handleTextChange(e.target.value)}
         placeholder="Enter text here. Use {{variableName}} for variables..."
         style={{
           width: '100%',

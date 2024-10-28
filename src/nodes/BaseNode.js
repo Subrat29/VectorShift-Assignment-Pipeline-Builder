@@ -76,8 +76,10 @@ export const BaseNode = ({
 
       {/* Node Content */}
       <div style={{ padding: '0 8px' }}>
-        {React.Children.map(children, child =>
-          React.cloneElement(child, { updateField, data })
+        {React.Children.map(children, (child) =>
+          typeof child.type === 'function' // Check if the child is a component (function or class)
+            ? React.cloneElement(child, { updateField, data })
+            : child // Leave as is if it's not a component (e.g., a plain HTML element)
         )}
       </div>
 
