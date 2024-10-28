@@ -1,0 +1,52 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Environment variables
+.env
+*.env
+
+# Virtual environments
+venv/
+env/
+env.bak/
+.venv/
+
+# Logs
+*.log
+
+# Database files
+*.sqlite3
+*.db
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+
+# Python eggs
+*.egg
+*.egg-info/
+dist/
+build/
+
+# C extensions
+*.so
+
+# Migrations
+migrations/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# IDE or editor specific files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Ignore Mac system files
+.DS_Store
+
+# Ignore Windows system files
+Thumbs.db
